@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-border: rgba(15, 23, 42, 0.08);
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #7c3aed;
+  --accent-foreground: #ffffff;
+  --ring: #8b5cf6;
+  --elevate: 0 8px 30px -8px rgba(15, 23, 42, 0.08);
+  --elevate-hover: 0 16px 40px -12px rgba(124, 58, 237, 0.18);
+}
+
+.dark {
+  --background: #030712;
+  --foreground: #f1f5f9;
+  --card: rgba(15, 23, 42, 0.72);
+  --card-border: rgba(148, 163, 184, 0.14);
+  --muted: rgba(30, 41, 59, 0.85);
+  --muted-foreground: #94a3b8;
+  --accent: #8b5cf6;
+  --accent-foreground: #ffffff;
+  --ring: #a78bfa;
+  --elevate: 0 12px 40px -12px rgba(0, 0, 0, 0.45);
+  --elevate-hover: 0 20px 50px -12px rgba(139, 92, 246, 0.22);
+}
+
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cep-btn-primary,
+  .cep-glass {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Ambient mesh (home + layout) */
+.cep-mesh {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.22), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(59, 130, 246, 0.12), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 20%, rgba(168, 85, 247, 0.1), transparent);
+}
+
+.dark .cep-mesh {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.35), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(59, 130, 246, 0.18), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 20%, rgba(168, 85, 247, 0.15), transparent);
+}
+
+/* Gradient text utility */
+.cep-gradient-text {
+  background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 35%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+html:not(.dark) .cep-gradient-text {
+  background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 40%, #2563eb 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Primary button gradient */
+.cep-btn-primary {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #3b82f6 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 4px 24px -4px rgba(124, 58, 237, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.cep-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 8px 32px -4px rgba(124, 58, 237, 0.55);
+  transform: translateY(-1px);
+}
+
+.cep-btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cep-btn-primary:hover:not(:disabled),
+  .cep-btn-primary:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Secondary outline CTA (home, hero) */
+.cep-btn-outline {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.25s ease;
+}
+
+.cep-btn-outline:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  background: color-mix(in oklab, var(--muted) 70%, transparent);
+  box-shadow: var(--elevate);
+}
+
+.cep-btn-outline:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cep-btn-outline:active {
+    transform: none;
+  }
+}
+
+/* Card glass */
+.cep-glass {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.35s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cep-glass-interactive:hover {
+    border-color: color-mix(in oklab, var(--ring) 35%, var(--card-border));
+    box-shadow: var(--elevate-hover);
+  }
+}
+
+/* Mobile bottom nav safe area (used from layout / nav) */
+.cep-nav-pad {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+/* Sonner toast theme hook */
+[data-sonner-toaster] {
+  --normal-bg: var(--card);
+  --normal-border: var(--card-border);
+  --normal-text: var(--foreground);
+}

@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite: use strings instead of Prisma enums
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("STUDENT") // ADMIN | ORGANIZER | STUDENT
+  createdAt    DateTime @default(now())
+
+  organizedEvents Event[]  @relation("Organizer")
+  registrations   Registration[]
+  assignedTasks   Task[]   @relation("Assignee")
+  createdTasks    Task[]   @relation("TaskCreator")
+  feedbacks       Feedback[]
+  incidents       Incident[]
+  announcements   Announcement[]
+  notifications   Notification[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  venue       String
+  startsAt    DateTime
+  published   Boolean  @default(false)
+  organizerId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organizer     User           @relation("Organizer", fields: [organizerId], references: [id], onDelete: Cascade)
+  registrations Registration[]
+  tasks         Task[]
+  feedbacks     Feedback[]
+  incidents     Incident[]
+  announcements Announcement[]
+  notifications Notification[]
+  reminderLogs  ReminderLog[]
+}
+
+model Registration {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+}
+
+model Task {
+  id           String   @id @default(cuid())
+  eventId      String
+  name         String
+  assignedToId String
+  createdById  String
+  deadline     DateTime
+  status       String   @default("PENDING") // PENDING | DONE
+  createdAt    DateTime @default(now())
+
+  event      Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  assignedTo User  @relation("Assignee", fields: [assignedToId], references: [id], onDelete: Cascade)
+  createdBy  User  @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Cascade)
+}
+
+model Feedback {
+  id                 String   @id @default(cuid())
+  eventId            String
+  userId             String
+  ratingOrganization Int
+  ratingVenue        Int
+  ratingTiming       Int
+  ratingExperience   Int
+  comment            String?
+  createdAt          DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+}
+
+model Incident {
+  id          String   @id @default(cuid())
+  eventId     String
+  userId      String?
+  category    String // LATE_START | POOR_MANAGEMENT | VENUE_ISSUE | OTHER
+  description String
+  isAnonymous Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  eventId     String
+  organizerId String
+  message     String
+  createdAt   DateTime @default(now())
+
+  event     Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  organizer User  @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String?
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event? @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model ReminderLog {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  kind      String // DAY_BEFORE | HOUR_BEFORE
+  sentAt    DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId, kind])
+}
