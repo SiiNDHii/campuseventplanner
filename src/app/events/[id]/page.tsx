@@ -19,6 +19,8 @@ import {
 } from "@/components/events/EventRegistrationBlock";
 import { EventFeedbackForm } from "@/components/events/EventFeedbackForm";
 import { EventIncidentForm } from "@/components/events/EventIncidentForm";
+import { MarkAttendedButton } from "@/components/attendance/MarkAttendedButton";
+import { EventQRCode } from "@/components/qr/EventQRCode";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -120,32 +122,36 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       </div>
 
       {session && isOrganizerRole(session.role) && (session.role === "ADMIN" || event.organizerId === session.userId) && (
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href={`/organizer/events/${id}/edit`}
-            className={cn(
-              "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/50 px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted)]"
-            )}
-          >
-            <Pencil className="h-4 w-4" /> Edit
-          </Link>
-          <Link
-            href={`/organizer/events/${id}/tasks`}
-            className={cn(
-              "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/50 px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted)]"
-            )}
-          >
-            <ClipboardList className="h-4 w-4" /> Tasks
-          </Link>
-          <Link
-            href={`/organizer/events/${id}/participants`}
-            className={cn(
-              "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/50 px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted)]"
-            )}
-          >
-            <Users className="h-4 w-4" /> Participants
-          </Link>
-        </div>
+        <>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href={`/organizer/events/${id}/edit`}
+              className={cn(
+                "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/50 px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted)]"
+              )}
+            >
+              <Pencil className="h-4 w-4" /> Edit
+            </Link>
+            <Link
+              href={`/organizer/events/${id}/tasks`}
+              className={cn(
+                "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/50 px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted)]"
+              )}
+            >
+              <ClipboardList className="h-4 w-4" /> Tasks
+            </Link>
+            <Link
+              href={`/organizer/events/${id}/participants`}
+              className={cn(
+                "inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/50 px-4 py-2.5 text-sm font-medium text-[var(--foreground)] transition-all hover:bg-[var(--muted)]"
+              )}
+            >
+              <Users className="h-4 w-4" /> Participants
+            </Link>
+          </div>
+          
+          <EventQRCode eventId={id} eventTitle={event.title} />
+        </>
       )}
 
       {event.published && (
@@ -180,11 +186,23 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
 
       {event.published && registration && (
         <Card className="p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-[var(--foreground)]">Feedback</h2>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-            Rate organization, venue, timing, and overall experience (1–5). You can update anytime.
-          </p>
-          <EventFeedbackForm eventId={id} existingFeedback={existingFeedback} />
+          <div className="space-y-6">
+            {new Date() > event.startsAt && !registration.attended && (
+              <div>
+                <h2 className="text-lg font-semibold text-[var(--foreground)] mb-3">Did you attend?</h2>
+                <p className="text-sm text-[var(--muted-foreground)] mb-4">Mark this event as attended to indicate you participated.</p>
+                <MarkAttendedButton eventId={id} isAttended={registration.attended} />
+              </div>
+            )}
+            
+            <div>
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">Feedback</h2>
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+                Rate organization, venue, timing, and overall experience (1–5). You can update anytime.
+              </p>
+              <EventFeedbackForm eventId={id} existingFeedback={existingFeedback} />
+            </div>
+          </div>
         </Card>
       )}
 

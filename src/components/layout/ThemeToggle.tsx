@@ -3,12 +3,18 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const isDark = resolvedTheme === "dark";
 
-  if (resolvedTheme === undefined) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
     return (
       <div
         className="h-10 w-10 shrink-0 animate-pulse rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/30 sm:h-9 sm:w-9"

@@ -108,7 +108,7 @@ export function EventsExplorer({ published, drafts, showCreate }: Props) {
               className={cn(
                 "shrink-0 rounded-full px-3 py-2 text-xs font-semibold transition-all duration-200 active:scale-95 sm:py-1.5",
                 category === opt.id
-                  ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/30"
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30"
                   : "bg-[var(--muted)]/50 text-[var(--muted-foreground)] [@media(hover:hover)]:hover:bg-[var(--muted)]"
               )}
             >

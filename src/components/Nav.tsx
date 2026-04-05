@@ -1,5 +1,4 @@
-import { getCurrentUser } from "@/app/actions/auth";
-import { isOrganizerRole } from "@/lib/auth";
+import { getCurrentUser, isOrganizerRole } from "@/lib/auth-server";
 import { prisma } from "@/lib/prisma";
 import { NavBar } from "@/components/layout/NavBar";
 
@@ -16,7 +15,7 @@ export async function Nav() {
     <NavBar
       user={
         user
-          ? { id: user.id, email: user.email, name: user.name, role: user.role }
+          ? { id: user.id, email: user.email!, name: user.name, role: user.role }
           : null
       }
       isOrganizer={user ? isOrganizerRole(user.role) : false}

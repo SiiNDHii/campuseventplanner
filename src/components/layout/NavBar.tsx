@@ -12,9 +12,11 @@ import {
   LogOut,
   Sparkles,
   User,
+  Settings,
+  Mail,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { signOut } from "@/app/actions/auth";
+import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { FormSubmitButton } from "@/components/ui/form-submit-button";
@@ -53,17 +55,17 @@ export function NavBar({ user, isOrganizer, unreadNotifications }: NavBarProps) 
     return () => document.removeEventListener("click", close);
   }, []);
 
-  const links: { href: string; label: string; icon: React.ReactNode; organizerOnly?: boolean }[] = [
+  const links: { href: string; label: string; icon: React.ReactNode; organizerOnly?: boolean; badge?: boolean }[] = [
     { href: "/events", label: "Events", icon: <CalendarDays className="h-4 w-4" /> },
-    { href: "/organizer/events", label: "Dashboard", icon: <LayoutDashboard className="h-4 w-4" />, organizerOnly: true },
-    { href: "/organizer/learning", label: "Insights", icon: <Sparkles className="h-4 w-4" />, organizerOnly: true },
+    { href: "/dashboard", label: "My Dashboard", icon: <LayoutDashboard className="h-4 w-4" /> },
+    { href: "/organizer/events", label: "Organize", icon: <Sparkles className="h-4 w-4" />, organizerOnly: true },
   ];
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--card-border)] bg-[var(--background)]/80 shadow-sm shadow-black/[0.03] backdrop-blur-xl backdrop-saturate-150 dark:shadow-black/20">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 pt-[env(safe-area-inset-top,0px)] sm:h-16 sm:gap-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex min-h-11 min-w-11 items-center gap-2.5 shrink-0 rounded-xl pr-1 transition-transform active:scale-[0.98] sm:min-h-0 sm:min-w-0 [@media(hover:hover)]:hover:opacity-95">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30 transition-transform duration-300 [@media(hover:hover)]:group-hover:scale-105 [@media(hover:hover)]:group-hover:shadow-violet-500/40">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 shadow-lg shadow-purple-500/30 transition-transform duration-300 [@media(hover:hover)]:group-hover:scale-105 [@media(hover:hover)]:group-hover:shadow-purple-500/40">
             <GraduationCap className="h-5 w-5 text-white" />
           </span>
           <span className="hidden font-semibold tracking-tight text-[var(--foreground)] sm:block">
@@ -106,7 +108,7 @@ export function NavBar({ user, isOrganizer, unreadNotifications }: NavBarProps) 
               >
                 <Bell className="h-4 w-4" />
                 {unreadNotifications > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-1 text-[10px] font-bold text-white shadow-md">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-1 text-[10px] font-bold text-white shadow-md">
                     {unreadNotifications > 9 ? "9+" : unreadNotifications}
                   </span>
                 )}
@@ -118,7 +120,7 @@ export function NavBar({ user, isOrganizer, unreadNotifications }: NavBarProps) 
                   onClick={() => setMenuOpen((o) => !o)}
                   className="flex min-h-10 items-center gap-2 rounded-xl border border-[var(--card-border)] bg-[var(--muted)]/40 py-1.5 pl-2 pr-2.5 text-sm transition-all duration-200 active:scale-[0.98] [@media(hover:hover)]:hover:border-violet-500/20 [@media(hover:hover)]:hover:bg-[var(--muted)]/75 sm:min-h-0"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500/30 to-blue-500/30">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500/30 to-pink-500/30">
                     <User className="h-3.5 w-3.5 text-violet-300" />
                   </span>
                   <span className="hidden max-w-[120px] truncate text-[var(--foreground)] sm:block">
@@ -142,11 +144,74 @@ export function NavBar({ user, isOrganizer, unreadNotifications }: NavBarProps) 
                         <p className="mt-1 text-[10px] uppercase tracking-wider text-violet-400">{user.role}</p>
                       </div>
                       <Link
-                        href="/events"
-                        className="mt-1 flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 md:hidden [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        href="/my-events"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
                         onClick={() => setMenuOpen(false)}
                       >
-                        <CalendarDays className="h-4 w-4" /> Events
+                        <CalendarDays className="h-4 w-4" /> My Events
+                      </Link>
+                      <Link
+                        href="/profile"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4" /> My Profile
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4" /> Settings
+                      </Link>
+                      <Link
+                        href="/support"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Mail className="h-4 w-4" /> Support
+                      </Link>
+                      <Link
+                        href="/dashboard"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <LayoutDashboard className="h-4 w-4" /> My Dashboard
+                      </Link>
+                      <Link
+                        href="/events"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 md:hidden [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <CalendarDays className="h-4 w-4" /> Browse Events
+                      </Link>
+                      <Link
+                        href="/dashboard"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 md:hidden [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <LayoutDashboard className="h-4 w-4" /> My Dashboard
+                      </Link>
+                      <Link
+                        href="/profile"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 md:hidden [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4" /> My Profile
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 md:hidden [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4" /> Settings
+                      </Link>
+                      <Link
+                        href="/support"
+                        className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 md:hidden [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Mail className="h-4 w-4" /> Support
                       </Link>
                       {isOrganizer && (
                         <>
@@ -155,7 +220,7 @@ export function NavBar({ user, isOrganizer, unreadNotifications }: NavBarProps) 
                             className="flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-sm text-[var(--muted-foreground)] transition-colors active:bg-[var(--muted)]/50 md:hidden [@media(hover:hover)]:hover:bg-[var(--muted)]/60 [@media(hover:hover)]:hover:text-[var(--foreground)]"
                             onClick={() => setMenuOpen(false)}
                           >
-                            <LayoutDashboard className="h-4 w-4" /> Dashboard
+                            <LayoutDashboard className="h-4 w-4" /> Organize Events
                           </Link>
                           <Link
                             href="/organizer/learning"
@@ -166,14 +231,15 @@ export function NavBar({ user, isOrganizer, unreadNotifications }: NavBarProps) 
                           </Link>
                         </>
                       )}
-                      <form action={signOut} className="mt-1">
-                        <FormSubmitButton
-                          variant="ghost"
-                          className="h-auto min-h-10 w-full justify-start gap-2 rounded-lg px-3 py-2 text-left text-sm font-normal text-red-400 transition-colors active:bg-red-500/15 [@media(hover:hover)]:hover:bg-red-500/10"
-                        >
-                          <LogOut className="h-4 w-4 shrink-0" /> Sign out
-                        </FormSubmitButton>
-                      </form>
+                      <button
+                        onClick={async () => {
+                          setMenuOpen(false);
+                          await signOut({ redirectUrl: "/" });
+                        }}
+                        className="flex min-h-10 w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition-colors active:bg-red-500/15 mt-1 [@media(hover:hover)]:hover:bg-red-500/10"
+                      >
+                        <LogOut className="h-4 w-4 shrink-0" /> Sign out
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>

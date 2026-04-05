@@ -7,21 +7,34 @@ import { prisma } from "@/lib/prisma";
 import { ROLES } from "@/lib/constants";
 import { safeInternalPath, signInFormSchema, signUpFormSchema } from "@/lib/validation/schemas";
 
-export async function signIn(formData: FormData) {
+export type AuthState = {
+  error?: string;
+  success?: string;
+  type?: "error" | "success";
+  message?: string;
+} | null;
+
+export async function signIn(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const parsed = signInFormSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
     next: formData.get("next") ?? undefined,
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+    return {
+      type: "error",
+      message: parsed.error.issues[0]?.message ?? "Invalid input.",
+    };
   }
   const { email, password, next } = parsed.data;
   const safeNext = safeInternalPath(next ?? "/");
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-    return { error: "Invalid email or password." };
+    return {
+      type: "error",
+      message: "Invalid email or password.",
+    };
   }
 
   await createSession({
@@ -33,20 +46,26 @@ export async function signIn(formData: FormData) {
   redirect(safeNext);
 }
 
-export async function signUp(formData: FormData) {
+export async function signUp(_prev: AuthState, formData: FormData): Promise<AuthState> {
   const parsed = signUpFormSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
     name: formData.get("name"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Invalid input." };
+    return {
+      type: "error",
+      message: parsed.error.issues[0]?.message ?? "Invalid input.",
+    };
   }
   const { email, password, name } = parsed.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
-    return { error: "An account with this email already exists." };
+    return {
+      type: "error",
+      message: "An account with this email already exists.",
+    };
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -80,9 +99,5 @@ export async function getCurrentUser() {
     where: { id: session.userId },
     select: { id: true, email: true, name: true, role: true },
   });
-  if (!user) {
-    await clearSession();
-    return null;
-  }
-  return user;
+  return user ?? null;
 }

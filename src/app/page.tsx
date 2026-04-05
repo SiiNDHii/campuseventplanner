@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarCheck, LineChart, MessageSquareText, Users } from "lucide-react";
+import { CalendarCheck, LineChart, Users, LayoutDashboard } from "lucide-react";
 import { Hero } from "@/components/landing/Hero";
 import { Card } from "@/components/ui/card";
 
@@ -17,10 +17,10 @@ const features = [
     icon: Users,
   },
   {
-    title: "Feedback that scales",
+    title: "Personal dashboard",
     description:
-      "Star ratings across organization, venue, timing, and experience — plus optional comments organizers can learn from.",
-    icon: MessageSquareText,
+      "Track your registrations, search events by category, see real-time stats, and manage all your activities in one beautiful place.",
+    icon: LayoutDashboard,
   },
   {
     title: "Insights, not guesswork",
@@ -38,7 +38,7 @@ export default function HomePage() {
       <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6">
         {features.map((f) => (
           <Card key={f.title} hover className="group p-5 sm:p-7 md:p-8">
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-blue-500/20 text-violet-300 transition-transform duration-300 [@media(hover:hover)]:group-hover:scale-105 sm:h-12 sm:w-12">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-purple-300 transition-transform duration-300 [@media(hover:hover)]:group-hover:scale-105 sm:h-12 sm:w-12">
               <f.icon className="h-6 w-6" />
             </div>
             <h2 className="text-lg font-semibold text-[var(--foreground)] sm:text-xl">{f.title}</h2>
@@ -58,6 +58,12 @@ export default function HomePage() {
             className="cep-btn-primary inline-flex min-h-12 items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold text-white sm:min-h-0 sm:px-8"
           >
             Explore events
+          </Link>
+          <Link
+            href="/dashboard"
+            className="cep-btn-outline inline-flex min-h-12 items-center justify-center rounded-xl border border-[var(--card-border)] px-6 py-3 text-sm font-semibold text-[var(--foreground)] sm:min-h-0 sm:px-8"
+          >
+            Go to dashboard
           </Link>
           <Link
             href="/login"

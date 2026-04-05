@@ -7,15 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// NextAuth required models
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
 // SQLite: use strings instead of Prisma enums
 model User {
   id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
+  email        String?  @unique
+  emailVerified DateTime?
+  passwordHash String?  // Optional for OAuth users
   name         String?
+  image        String?  // Google profile picture URL
   role         String   @default("STUDENT") // ADMIN | ORGANIZER | STUDENT
+  profileImage String?  // Base64 encoded image or URL (kept for backward compatibility)
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
+  accounts      Account[]
+  sessions      Session[]
   organizedEvents Event[]  @relation("Organizer")
   registrations   Registration[]
   assignedTasks   Task[]   @relation("Assignee")
@@ -52,6 +95,8 @@ model Registration {
   userId    String
   eventId   String
   createdAt DateTime @default(now())
+  attended  Boolean  @default(false)
+  attendedAt DateTime?
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)

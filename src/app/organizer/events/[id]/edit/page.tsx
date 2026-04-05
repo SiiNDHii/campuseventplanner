@@ -66,6 +66,14 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
         >
           Participants
         </Link>
+        <a
+          href={`/events/${id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl border border-[var(--card-border)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]/50"
+        >
+          View Public Page ↗
+        </a>
       </div>
     </div>
   );

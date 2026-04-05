@@ -92,7 +92,7 @@ body {
 }
 
 html:not(.dark) .cep-gradient-text {
-  background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 40%, #2563eb 100%);
+  background: linear-gradient(135deg, #6b21a8 0%, #9333ea 40%, #ec4899 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -100,14 +100,14 @@ html:not(.dark) .cep-gradient-text {
 
 /* Primary button gradient */
 .cep-btn-primary {
-  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 50%, #3b82f6 100%);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 4px 24px -4px rgba(124, 58, 237, 0.45);
+  background: linear-gradient(135deg, #9333ea 0%, #9f1239 50%, #ec4899 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 4px 24px -4px rgba(147, 51, 234, 0.45);
   transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .cep-btn-primary:hover:not(:disabled) {
   filter: brightness(1.06);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 8px 32px -4px rgba(124, 58, 237, 0.55);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 8px 32px -4px rgba(147, 51, 234, 0.55);
   transform: translateY(-1px);
 }
 

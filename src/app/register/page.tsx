@@ -1,20 +1,22 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { RegisterAuthScene } from "@/app/register/RegisterAuthScene";
 import { RegisterForm } from "@/app/register/RegisterForm";
 
 export default function RegisterPage() {
   return (
-    <div className="mx-auto max-w-md space-y-8 pt-4">
-      <div className="text-center">
+    <RegisterAuthScene>
+      <div className="w-full max-w-md flex flex-col items-center">
         <Link
           href="/"
-          className="text-sm font-medium text-[var(--muted-foreground)] transition-colors hover:text-violet-400"
+          className="group mb-6 inline-flex items-center gap-2 self-start text-sm font-medium text-slate-300 transition-colors hover:text-white dark:text-slate-400 dark:hover:text-slate-200"
         >
-          ← Back to home
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" aria-hidden />
+          Back to home
         </Link>
-        <h1 className="mt-6 text-3xl font-bold tracking-tight text-[var(--foreground)]">Create your account</h1>
-        <p className="mt-2 text-sm text-[var(--muted-foreground)]">New accounts join as students by default.</p>
+
+        <RegisterForm />
       </div>
-      <RegisterForm />
-    </div>
+    </RegisterAuthScene>
   );
 }

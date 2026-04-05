@@ -54,7 +54,7 @@ export default async function LearningPage() {
     <div className="space-y-10 pb-10">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500/30 to-blue-500/20 text-violet-300">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500/30 to-pink-500/20 text-purple-300">
             <Sparkles className="h-6 w-6" />
           </span>
           <div>
